@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 from EmotionDetection import emotion_detector
 
 app = Flask(__name__)
@@ -9,22 +9,19 @@ def index():
     return render_template('index.html')
 
 
-# Emotion detection route
 @app.route('/emotionDetector', methods=['GET'])
 def emotion_detector_route():
     text_to_analyze = request.args.get('textToAnalyze')
 
+    
     if not text_to_analyze:
-        return jsonify({
-            'anger': None,
-            'disgust': None,
-            'fear': None,
-            'joy': None,
-            'sadness': None,
-            'dominant_emotion': None
-        })
+        return "No text! Please try again!"
 
     result = emotion_detector(text_to_analyze)
+
+    
+    if result['dominant_emotion'] is None:
+        return "Invalid text! Please try again!"
 
     formatted_response = (
         f"For the given statement, the system response is "
@@ -41,3 +38,4 @@ def emotion_detector_route():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
